@@ -18,4 +18,6 @@ fi
 
 $(command -v airflow) db upgrade
 
+airflow scheduler &
+
 exec airflow webserver
