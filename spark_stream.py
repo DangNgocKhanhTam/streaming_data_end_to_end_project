@@ -70,12 +70,17 @@ def create_spark_connection():
 
     try:
         s_conn = SparkSession.builder \
-            .appName('SparkDataStreaming') \
-            .config("spark.master", "local[*]") \
-            .config('spark.jars.packages', "com.datastax.spark:spark-cassandra-connector_2.13:3.4.1,"
-                                        "org.apache.spark:spark-sql-kafka-0-10_2.13:3.4.1") \
-            .config('spark.cassandra.connection.host', 'localhost') \
-            .getOrCreate()
+                    .appName("KafkaReader") \
+                    .master("local[*]") \
+                    .config("spark.sql.adaptive.enabled", "false") \
+                    .config("spark.jars.packages",
+                            "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,"
+                            "org.apache.kafka:kafka-clients:3.5.0,"
+                            "org.apache.spark:spark-token-provider-kafka-0-10_2.12:3.5.0,"
+                            "com.datastax.spark:spark-cassandra-connector_2.12:3.5.0") \
+                    .config("spark.cassandra.connection.host", "localhost") \
+                    .config("spark.cassandra.output.consistency.level", "ONE") \
+                    .getOrCreate()
 
         s_conn.sparkContext.setLogLevel("ERROR")
         logging.info("Spark connection created successfully!")
@@ -89,11 +94,11 @@ def connect_to_kafka(spark_conn):
     spark_df = None
     try:
         spark_df = spark_conn.readStream \
-            .format('kafka') \
-            .option('kafka.bootstrap.servers', 'kafka:9092') \
-            .option('subscribe', 'users_created') \
-            .option('startingOffsets', 'earliest') \
-            .load()
+                    .format("kafka") \
+                    .option("kafka.bootstrap.servers", "localhost:29092") \
+                    .option("subscribe", "user_created") \
+                    .option("startingOffsets", "earliest") \
+                    .load()
         logging.info("kafka dataframe created successfully")
     except Exception as e:
         logging.warning(f"kafka dataframe could not be created because: {e}")
@@ -116,17 +121,18 @@ def create_cassandra_connection():
 
 def create_selection_df_from_kafka(spark_df):
     schema = StructType([
-        StructField("id", StringType(), False),
-        StructField("first_name", StringType(), False),
-        StructField("last_name", StringType(), False),
-        StructField("gender", StringType(), False),
-        StructField("address", StringType(), False),
-        StructField("post_code", StringType(), False),
-        StructField("email", StringType(), False),
-        StructField("username", StringType(), False),
-        StructField("registered_date", StringType(), False),
-        StructField("phone", StringType(), False),
-        StructField("picture", StringType(), False)
+        StructField("first_name", StringType(), True),
+        StructField("last_name", StringType(), True),
+        StructField("gender", StringType(), True),
+        StructField("address", StringType(), True),
+        StructField("post_code", StringType(), True),
+        StructField("email", StringType(), True),
+        StructField("username", StringType(), True),
+        StructField("dob", StringType(), True),
+        StructField("registered_date", StringType(), True),
+        StructField("phone", StringType(), True),
+        StructField("picture", StringType(), True),
+
     ])
 
     sel = spark_df.selectExpr("CAST(value AS STRING)") \
@@ -135,13 +141,7 @@ def create_selection_df_from_kafka(spark_df):
 
     return sel
 
-def write_to_cassandra(batch_df, batch_id):
-    batch_df.write \
-        .format("org.apache.spark.sql.cassandra") \
-        .mode("append") \
-        .option("keyspace", "spark_streams") \
-        .option("table", "created_users") \
-        .save()
+
 
 
 if __name__ == "__main__":
@@ -161,9 +161,12 @@ if __name__ == "__main__":
             logging.info("Streaming is being started...")
 
             streaming_query = selection_df.writeStream \
-                .foreachBatch(write_to_cassandra) \
-                .option("checkpointLocation", "/tmp/checkpoint") \
-                .start()
+                    .format("org.apache.spark.sql.cassandra") \
+                    .option("checkpointLocation", "/tmp/spark-checkpoint-cassandra") \
+                    .option("keyspace", "demo") \
+                    .option("table", "users") \
+                    .outputMode("append") \
+                    .start()
 
             streaming_query.awaitTermination()
 

@@ -52,8 +52,21 @@ services:
       - 8080:8080
     command: bash -c '(airflow db init && airflow users create --username admin --password admin --firstname tam --lastname dang --role Admin --email tamdangngoc0707@gmail.com); airflow webserver & airflow scheduler'
 
+
+  cassandra:
+    image: cassandra:4.1
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    networks:
+      - cassandra-net
 volumes:
   zookeeper-data:
   kafka-data:
   broker-data:
   airflow:
+  cassandra-data:
