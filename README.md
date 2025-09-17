@@ -10,6 +10,7 @@ This project involves designing a real-time data pipeline with Kafka and Spark S
 - **Airflow**: Orchestrates the entire ETL workflow, including data extraction, transformation, and reporting.
 - **Reporting**: Automates the generation of daily CSV reports with relevant stock metrics.
 
+
 ## Market API ##
 You can see a snapshot of the web application output below.
 
