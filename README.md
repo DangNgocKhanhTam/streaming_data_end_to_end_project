@@ -3,12 +3,12 @@
 This project involves designing a real-time data pipeline with Kafka and Spark Streaming. Stock price data is streamed from a custom Market API and stored in MongoDB. A daily workflow, managed with Apache Airflow, extracts details about stock prices and loads them into a PostgreSQL database. Using this daily data, I produce a concise report highlighting key stock statistics.
 ## Core Components: ##
 
-- ** Stock Prices API ** : Provides live stock information such as volume, percentage, price, and more.
-- ** Kafka & Spark Streaming  **: Handle real-time data ingestion and processing.
-- ** MongoDB **: Serves as the storage for streaming stock price data.
-- ** PostgreSQL **: Archives daily summaries of stocks.
-- ** Airflow  **: Orchestrates the entire ETL workflow, including data extraction, transformation, and reporting.
-- ** Reporting **: Automates the generation of daily CSV reports with relevant stock metrics.
+- **Stock Prices API** : Provides live stock information such as volume, percentage, price, and more.
+- **Kafka & Spark Streaming** : Handle real-time data ingestion and processing.
+- **MongoDB**: Serves as the storage for streaming stock price data.
+- **PostgreSQL**: Archives daily summaries of stocks.
+- **Airflow**: Orchestrates the entire ETL workflow, including data extraction, transformation, and reporting.
+- **Reporting**: Automates the generation of daily CSV reports with relevant stock metrics.
 
 ## Market API ##
 You can see a snapshot of the web application output below.
