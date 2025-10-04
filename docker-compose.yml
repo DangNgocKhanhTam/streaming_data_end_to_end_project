@@ -5,7 +5,7 @@ services:
     image: confluentinc/cp-zookeeper:7.5.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_TICK_TIME: 2001
     ports:
       - 2181:2181
     volumes:
@@ -63,7 +63,7 @@ services:
     volumes:
       - cassandra-data:/var/lib/cassandra
     networks:
-      - cassandra-net
+     - cassandra-net
 volumes:
   zookeeper-data:
   kafka-data:
