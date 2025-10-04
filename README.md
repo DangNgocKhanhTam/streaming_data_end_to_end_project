@@ -1,8 +1,8 @@
-# Real-Time Data Pipeline with Kafka, Spark, and Airflow
+<img width="1008" height="598" alt="image" src="https://github.com/user-attachments/assets/ad64710d-2f21-4d81-a091-71c1d77c5017" /># Real-Time Data Pipeline with Kafka, Spark, and Airflow
 ## **Overview**
 This project involves designing a real-time data pipeline with Kafka and Spark Streaming. Stock price data is streamed from a custom Market API and stored in MongoDB. A daily workflow, managed with Apache Airflow, extracts details about stock prices and loads them into a PostgreSQL database. Using this daily data, I produce a concise report highlighting key stock statistics.
  
-![Uploading image.png…]()
+<img width="995" height="625" alt="image" src="https://github.com/user-attachments/assets/cdbf3cc8-fd68-4eb0-bebc-6299f9c90159" />
 
 
 
